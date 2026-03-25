@@ -13,6 +13,10 @@ interface ArticleInput {
     avatar?: string;
     description?: string;
 }
+interface UpdateArticleArgs {
+    id: string;
+    article: ArticleInput;
+}
 
 interface CreateArticleArgs {
     article: ArticleInput;
@@ -57,6 +61,20 @@ export const resolvers = {
                 }
             );
             return "Da xoa";
+        },
+        updateArticle: async (_: unknown, args: UpdateArticleArgs) => {
+            const { id, article } = args;
+            const record = await Article.findOneAndUpdate(
+                {
+                    _id: id,
+                    deleted: false
+                },
+                article,
+                {
+                    new: true
+                }
+            );
+            return record;
         }
     }
 };
