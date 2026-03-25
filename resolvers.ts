@@ -1,5 +1,9 @@
 import Article from "./models/article.model";
 
+interface GetArticleArgs {
+    id: string;
+}
+
 export const resolvers = {
     Query: {
         hello: () => {
@@ -7,6 +11,14 @@ export const resolvers = {
         },
         getListArticle: async () => {
             const article = await Article.find({
+                deleted: false
+            });
+            return article;
+        },
+        getArticle: async (_: unknown, args: GetArticleArgs) => {
+            const { id } = args;
+            const article = await Article.findOne({
+                _id: id,
                 deleted: false
             });
             return article;
