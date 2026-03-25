@@ -2,6 +2,16 @@ export interface IdArgs {
   id: string;
 }
 
+export interface SortArgs {
+  filterKey?: string;
+  filterValue?: string;
+  sortKey?: string;
+  sortValue?: string;
+  page?: number;
+  limit?: number;
+  keyword?: string;
+}
+
 export interface ArticleInput {
   title?: string;
   avatar?: string;

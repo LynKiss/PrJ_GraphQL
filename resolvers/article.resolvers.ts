@@ -4,15 +4,54 @@ import {
   ArticleParent,
   CreateArticleArgs,
   IdArgs,
+  SortArgs,
   UpdateArticleArgs,
 } from "./types";
 
 export const articleResolvers = {
   Query: {
-    getListArticle: async () => {
-      const articles = await Article.find({
+    getListArticle: async (_: unknown, args: SortArgs) => {
+      const {
+        filterKey,
+        filterValue,
+        sortKey,
+        sortValue,
+        page = 1,
+        limit = 4,
+        keyword,
+      } = args;
+      const sort: Record<string, 1 | -1> = {};
+      const find: Record<string, unknown> = {
         deleted: false,
-      });
+      };
+      const currentPage = page > 0 ? page : 1;
+      const currentLimit = limit > 0 ? limit : 4;
+      const skip = (currentPage - 1) * currentLimit;
+
+      // Bo loc dong, vi du: find["categoryId"] = "abc123"
+      if (filterKey && filterValue) {
+        find[filterKey] = filterValue;
+      }
+
+      // Tao object sort dong, vi du: { title: 1 } hoac { createdAt: -1 }
+      if (sortKey && sortValue) {
+        const normalizedValue =
+          sortValue.toLowerCase() === "desc" || sortValue === "-1" ? -1 : 1;
+        sort[sortKey] = normalizedValue;
+      }
+
+      // Tim kiem gan dung theo title
+      if (keyword) {
+        const keywordRegex = new RegExp(keyword, "i");
+        find.title = keywordRegex;
+      }
+
+      // Phan trang bang skip va limit
+      const articles = await Article.find(find)
+        .sort(sort)
+        .skip(skip)
+        .limit(currentLimit);
+
       return articles;
     },
     getArticle: async (_: unknown, args: IdArgs) => {
