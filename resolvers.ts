@@ -9,6 +9,7 @@ interface ArticleInput {
     title?: string;
     avatar?: string;
     description?: string;
+    categoryId?: string;
 }
 
 interface CreateArticleArgs {
@@ -32,6 +33,10 @@ interface CreateCategoryArgs {
 interface UpdateCategoryArgs {
     id: string;
     category: CategoryInput;
+}
+
+interface ArticleParent {
+    categoryId?: string;
 }
 
 export const resolvers = {
@@ -63,6 +68,21 @@ export const resolvers = {
             const { id } = args;
             const category = await Category.findOne({
                 _id: id,
+                deleted: false
+            });
+            return category;
+        }
+    },
+    Article: {
+        category: async (article: ArticleParent) => {
+            const { categoryId } = article;
+
+            if (!categoryId) {
+                return null;
+            }
+
+            const category = await Category.findOne({
+                _id: categoryId,
                 deleted: false
             });
             return category;
