@@ -1,5 +1,6 @@
 import { articleResolvers } from "./article.resolvers";
 import { categoryResolvers } from "./category.resolvers";
+import { userResolvers } from "./user.resolvers";
 
 export const resolvers = {
   Query: {
@@ -15,5 +16,6 @@ export const resolvers = {
   Mutation: {
     ...articleResolvers.Mutation,
     ...categoryResolvers.Mutation,
+    ...userResolvers.Mutation,
   },
 };
